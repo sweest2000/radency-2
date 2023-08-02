@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useActions } from '../../hooks/useActions';
+import { useToggle } from '../../hooks/useToggle';
 
 type RowProps = {
   rowData: Array<string>;
@@ -6,7 +7,8 @@ type RowProps = {
 };
 
 const TableRow = ({ rowData, rowType }: RowProps) => {
-  const [enabled, setEnabled] = useState(true);
+  const { switchReducer } = useActions();
+  const { toggleState } = useToggle();
 
   return (
     <tr
@@ -56,10 +58,10 @@ const TableRow = ({ rowData, rowType }: RowProps) => {
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                value=""
                 className="sr-only peer"
-                checked={enabled}
-                onChange={() => setEnabled(!enabled)}
+                value=""
+                checked={toggleState}
+                onChange={() => switchReducer()}
               />
               <div className="w-11 h-6 border bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-transparent  dark:peer-focus:ring-transparent dark:bg-[#999999] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-white peer-checked:bg-[#999999]"></div>
             </label>
