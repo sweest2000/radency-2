@@ -1,4 +1,5 @@
 export interface INotes {
+  id?: string;
   icon: string;
   name: string;
   created: string;
@@ -9,4 +10,6 @@ export interface INotes {
 
 export interface INote {
   notes: INotes[];
+  notesHeader: INotes[];
+  archive: INotes[];
 }

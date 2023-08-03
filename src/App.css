@@ -6,6 +6,11 @@ td {
   @apply flex pt-2 pb-2 pl-2 pr-0 w-52;
 }
 
+thead tr td:first-child,
+tr td:first-child {
+  @apply w-12;
+}
+
 img {
   filter: invert(53%) sepia(9%) saturate(165%) hue-rotate(192deg)
     brightness(88%) contrast(91%);

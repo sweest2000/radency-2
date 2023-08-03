@@ -1,11 +1,61 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useActions } from '../../hooks/useActions';
+import { useNotes } from '../../hooks/useNotes';
+import { useToggle } from '../../hooks/useToggle';
 
 const Modal = () => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('Task');
   const [content, setContent] = useState('');
-  const { toggleModal, addNote } = useActions();
+  const { currentNote } = useToggle();
+  const { notes, archive } = useNotes();
+  const { toggleModal, addNote, changeNote, nullifyCurrentNote } = useActions();
+
+  useEffect(() => {
+    const targetItem =
+      notes.find((item) => item.id === currentNote) ||
+      archive.find((item) => item.id === currentNote);
+    if (targetItem) {
+      setName(targetItem.name);
+      setCategory(targetItem.category);
+      setContent(targetItem.content);
+    }
+  }, [currentNote]);
+
+  const handleNote = () => {
+    const noteData = {
+      icon:
+        category === 'Task'
+          ? 'src/assets/cart-fill.svg'
+          : category === 'Idea'
+          ? 'src/assets/lightbulb-fill.svg'
+          : 'src/assets/brain-fill.svg',
+      name,
+      category,
+      content,
+      dates: content.match(/\d{1,2}\/\d{1,2}\/\d{2,4}/g)?.join(', ') || '-',
+    };
+
+    if (currentNote) {
+      changeNote({
+        id: currentNote,
+        ...noteData,
+      });
+    } else {
+      addNote({
+        id: crypto.randomUUID(),
+        created: new Date().toLocaleDateString('en-us', {
+          month: 'long',
+          day: '2-digit',
+          year: 'numeric',
+        }),
+        ...noteData,
+      });
+    }
+    toggleModal(null);
+    nullifyCurrentNote();
+  };
+
   return (
     <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
@@ -55,35 +105,17 @@ const Modal = () => {
               <button
                 className="text-[#999999] background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={() => toggleModal()}
+                onClick={() => {
+                  toggleModal(null);
+                  nullifyCurrentNote();
+                }}
               >
                 Close
               </button>
               <button
-                className="bg-[#999999] text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={() => {
-                  addNote({
-                    icon:
-                      category === 'Task'
-                        ? 'src/assets/cart-fill.svg'
-                        : category === 'Idea'
-                        ? 'src/assets/lightbulb-fill.svg'
-                        : 'src/assets/brain-fill.svg',
-                    name,
-                    created: new Date().toLocaleDateString('en-us', {
-                      month: 'long',
-                      day: '2-digit',
-                      year: 'numeric',
-                    }),
-                    category,
-                    content,
-                    dates:
-                      content.match(/\d{1,2}\/\d{1,2}\/\d{2,4}/g)?.join(', ') ||
-                      '-',
-                  });
-                  toggleModal();
-                }}
+                className="bg-[#999999] text-white font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                type="submit"
+                onClick={handleNote}
               >
                 Save
               </button>
