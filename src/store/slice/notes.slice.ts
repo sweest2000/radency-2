@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { INote } from '../types/note.types';
+import { INote } from '../../types/note.types';
 
 const initialState: INote = {
   notes: [

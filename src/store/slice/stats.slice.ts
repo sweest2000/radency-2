@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IStat } from '../types/stat.types';
+import { IStat } from '../../types/stat.types';
 
 const initialState: IStat = {
   stats: [

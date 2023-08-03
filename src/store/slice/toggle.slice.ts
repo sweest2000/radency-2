@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IToggles } from '../types/toggle.types';
+import { IToggles } from '../../types/toggle.types';
 
 const initialState: IToggles = {
   toggleState: true,

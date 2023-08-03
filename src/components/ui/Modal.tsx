@@ -1,64 +1,67 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { useActions } from '../../hooks/useActions';
 import { useNotes } from '../../hooks/useNotes';
 import { useToggle } from '../../hooks/useToggle';
 
 const Modal = () => {
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('Task');
-  const [content, setContent] = useState('');
   const { currentNote } = useToggle();
   const { notes, archive } = useNotes();
   const { toggleModal, addNote, changeNote, nullifyCurrentNote } = useActions();
+  const { register, handleSubmit, setValue, getValues } = useForm();
 
   useEffect(() => {
     const targetItem =
       notes.find((item) => item.id === currentNote) ||
       archive.find((item) => item.id === currentNote);
     if (targetItem) {
-      setName(targetItem.name);
-      setCategory(targetItem.category);
-      setContent(targetItem.content);
+      setValue('name', targetItem.name);
+      setValue('category', targetItem.category);
+      setValue('content', targetItem.content);
     }
   }, [currentNote]);
 
   const handleNote = () => {
     const noteData = {
+      id: currentNote ? currentNote : crypto.randomUUID(),
       icon:
-        category === 'Task'
+        getValues('category') === 'Task'
           ? 'src/assets/cart-fill.svg'
-          : category === 'Idea'
+          : getValues('category') === 'Idea'
           ? 'src/assets/lightbulb-fill.svg'
           : 'src/assets/brain-fill.svg',
-      name,
-      category,
-      content,
-      dates: content.match(/\d{1,2}\/\d{1,2}\/\d{2,4}/g)?.join(', ') || '-',
+      name: getValues('name'),
+      created: currentNote
+        ? null
+        : new Date().toLocaleDateString('en-us', {
+            month: 'long',
+            day: '2-digit',
+            year: 'numeric',
+          }),
+      category: getValues('category'),
+      content: getValues('content'),
+      dates:
+        getValues('content')
+          .match(/\d{1,2}\/\d{1,2}\/\d{2,4}/g)
+          ?.join(', ') || '-',
     };
 
     if (currentNote) {
-      changeNote({
-        id: currentNote,
-        ...noteData,
-      });
+      changeNote(noteData);
     } else {
-      addNote({
-        id: crypto.randomUUID(),
-        created: new Date().toLocaleDateString('en-us', {
-          month: 'long',
-          day: '2-digit',
-          year: 'numeric',
-        }),
-        ...noteData,
-      });
+      addNote(noteData);
     }
+
     toggleModal(null);
     nullifyCurrentNote();
   };
 
   return (
     <>
-      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+      <form
+        onSubmit={handleSubmit(handleNote)}
+        className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+      >
         <div className="relative w-96 my-6 mx-auto max-w-3xl">
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
             <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
@@ -71,17 +74,14 @@ const Modal = () => {
                   type="text"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Note name"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...register('name', { required: true })}
                 />
               </div>
               <div>
                 <label>Category</label>
                 <select
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  {...register('category', { required: true })}
                 >
                   <option>Task</option>
                   <option>Random Thought</option>
@@ -95,9 +95,7 @@ const Modal = () => {
                   rows={5}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Write your content..."
-                  required
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  {...register('content', { required: true })}
                 />
               </div>
             </div>
@@ -115,14 +113,14 @@ const Modal = () => {
               <button
                 className="bg-[#999999] text-white font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="submit"
-                onClick={handleNote}
+                onSubmit={handleNote}
               >
                 Save
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </form>
       <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
     </>
   );
