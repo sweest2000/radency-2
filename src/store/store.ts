@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { reducer as modalReducer } from './modal.slice';
-import { reducer as notesReducer } from './notes.slice';
-import { reducer as statsReducer } from './stats.slice';
-import { reducer as toggleReducer } from './toggle.slice';
+import { reducer as modalReducer } from './slice/modal.slice';
+import { reducer as notesReducer } from './slice/notes.slice';
+import { reducer as statsReducer } from './slice/stats.slice';
+import { reducer as toggleReducer } from './slice/toggle.slice';
 
 const reducers = combineReducers({
   toggleReducer,

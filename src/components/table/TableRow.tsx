@@ -8,10 +8,15 @@ type RowProps = {
 };
 
 const TableRow = ({ rowData, rowType }: RowProps) => {
-  const { switchReducer, deleteNote, moveNote, moveAll, deleteAll } =
-    useActions();
+  const {
+    switchReducer,
+    deleteNote,
+    moveNote,
+    moveAll,
+    deleteAll,
+    toggleModal,
+  } = useActions();
   const { toggleState } = useToggle();
-  const { toggleModal } = useActions();
   const [id, setId] = useState(rowData[0]);
 
   return (
@@ -28,20 +33,21 @@ const TableRow = ({ rowData, rowType }: RowProps) => {
     >
       {rowData.map((item, index) => {
         if (index === 0 && rowType === 'note') return null;
-        else
-          return (
-            <td
-              key={crypto.randomUUID()}
-              className={rowType.includes('stat') ? 'w-96' : ''}
-            >
-              {(index === 1 && rowType === 'note') ||
-              (index === 0 && rowType === 'stat') ? (
-                <img src={item} />
-              ) : (
-                <span className="truncate">{item}</span>
-              )}
-            </td>
-          );
+        const isImageCell =
+          (index === 1 && rowType === 'note') ||
+          (index === 0 && rowType === 'stat');
+        return (
+          <td
+            key={crypto.randomUUID()}
+            className={rowType.includes('stat') ? 'w-96' : ''}
+          >
+            {isImageCell ? (
+              <img src={item} />
+            ) : (
+              <span className="truncate">{item}</span>
+            )}
+          </td>
+        );
       })}
       {rowType === 'note' ? (
         <td className="flex justify-end mr-3">
