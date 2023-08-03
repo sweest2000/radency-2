@@ -4,6 +4,7 @@ import { IToggles } from '../types/toggle.types';
 const initialState: IToggles = {
   toggleState: true,
   modalState: false,
+  currentNote: null,
 };
 
 export const toggleSlice = createSlice({
@@ -13,8 +14,12 @@ export const toggleSlice = createSlice({
     switchReducer: (state) => {
       state.toggleState = !state.toggleState;
     },
-    toggleModal: (state) => {
+    toggleModal: (state, { payload: id }) => {
+      if (id) state.currentNote = id;
       state.modalState = !state.modalState;
+    },
+    nullifyCurrentNote: (state) => {
+      state.currentNote = null;
     },
   },
 });

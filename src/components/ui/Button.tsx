@@ -10,7 +10,7 @@ const Button = ({ buttonText }: ButtonProps) => {
     <>
       <button
         className="bg-[#999999] text-white py-2 px-4 rounded"
-        onClick={() => toggleModal()}
+        onClick={() => toggleModal(null)}
       >
         {buttonText}
       </button>

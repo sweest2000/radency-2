@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useActions } from '../../hooks/useActions';
 import { useToggle } from '../../hooks/useToggle';
 
@@ -7,8 +8,11 @@ type RowProps = {
 };
 
 const TableRow = ({ rowData, rowType }: RowProps) => {
-  const { switchReducer } = useActions();
+  const { switchReducer, deleteNote, moveNote, moveAll, deleteAll } =
+    useActions();
   const { toggleState } = useToggle();
+  const { toggleModal } = useActions();
+  const [id, setId] = useState(rowData[0]);
 
   return (
     <tr
@@ -23,31 +27,32 @@ const TableRow = ({ rowData, rowType }: RowProps) => {
       }
     >
       {rowData.map((item, index) => {
-        return (
-          <td
-            key={item + index}
-            className={
-              index === 0 ? 'w-12' : rowType.includes('stat') ? 'w-96' : ''
-            }
-          >
-            {index === 0 ? (
-              <img src={item} />
-            ) : (
-              <span className="truncate">{item}</span>
-            )}
-          </td>
-        );
+        if (index === 0 && rowType === 'note') return null;
+        else
+          return (
+            <td
+              key={crypto.randomUUID()}
+              className={rowType.includes('stat') ? 'w-96' : ''}
+            >
+              {(index === 1 && rowType === 'note') ||
+              (index === 0 && rowType === 'stat') ? (
+                <img src={item} />
+              ) : (
+                <span className="truncate">{item}</span>
+              )}
+            </td>
+          );
       })}
       {rowType === 'note' ? (
         <td className="flex justify-end mr-3">
           <div className="flex gap-3">
-            <button>
+            <button onClick={() => toggleModal(id)}>
               <img src="src/assets/pencil-fill.svg" />
             </button>
-            <button>
+            <button onClick={() => moveNote(id)}>
               <img src="src/assets/archive-fill.svg" />
             </button>
-            <button>
+            <button onClick={() => deleteNote(id)}>
               <img src="src/assets/trash-fill.svg" />
             </button>
           </div>
@@ -65,7 +70,7 @@ const TableRow = ({ rowData, rowType }: RowProps) => {
               />
               <div className="w-11 h-6 border bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-transparent  dark:peer-focus:ring-transparent dark:bg-[#999999] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-white peer-checked:bg-[#999999]"></div>
             </label>
-            <button id="archive-all">
+            <button id="archive-all" onClick={() => moveAll(toggleState)}>
               <img
                 className="invert"
                 src="src/assets/archive-fill.svg"
@@ -74,7 +79,7 @@ const TableRow = ({ rowData, rowType }: RowProps) => {
                 height="25"
               />
             </button>
-            <button id="delete-all">
+            <button id="delete-all" onClick={() => deleteAll(toggleState)}>
               <img
                 className="invert"
                 src="src/assets/trash-fill.svg"

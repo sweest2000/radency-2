@@ -1,4 +1,5 @@
 import { useNotes } from '../../hooks/useNotes';
+import { useStats } from '../../hooks/useStats';
 import TableRow from './TableRow';
 
 type TableProps = {
@@ -6,66 +7,53 @@ type TableProps = {
 };
 
 const Table = ({ tableType }: TableProps) => {
-  const { notes } = useNotes();
-  //   const { addNote } = useActions();
-
-  const notesHeader: string[] = [
-    '',
-    'Name',
-    'Created',
-    'Category',
-    'Content',
-    'Dates',
-  ];
-  const statsHeader: string[] = ['', 'Note Category', 'Active', 'Archived'];
-
-  const stats = [
-    {
-      image: 'src/assets/cart-fill.svg',
-      name: 'Task',
-      active: '0',
-      archived: '0',
-    },
-    {
-      image: 'src/assets/lightbulb-fill.svg',
-      name: 'Idea',
-      active: '0',
-      archived: '0',
-    },
-    {
-      image: 'src/assets/brain-fill.svg',
-      name: 'Random Thought',
-      active: '0',
-      archived: '0',
-    },
-  ];
+  const { archive, notes, notesHeader } = useNotes();
+  const { stats, statsHeader } = useStats();
 
   return (
     <>
       <table className="flex flex-col gap-3">
         <thead>
           <TableRow
-            rowData={tableType === 'notes' ? notesHeader : statsHeader}
-            rowType={tableType === 'notes' ? 'notesHeader' : 'statsHeader'}
+            rowData={
+              tableType === 'notes' || tableType === 'archive'
+                ? Object.values(notesHeader[0])
+                : Object.values(statsHeader[0])
+            }
+            rowType={
+              tableType === 'notes' || tableType === 'archive'
+                ? 'notesHeader'
+                : 'statsHeader'
+            }
           />
         </thead>
         <tbody className="flex flex-col gap-3">
           {tableType === 'notes'
-            ? notes.map((item, index) => {
+            ? notes.map((item) => {
                 return (
                   <TableRow
-                    key={item.name + index}
+                    key={crypto.randomUUID()}
                     rowData={Object.values(item)}
                     rowType="note"
                   />
                 );
               })
-            : stats.map((item, index) => {
+            : tableType === 'stats'
+            ? stats.map((item) => {
                 return (
                   <TableRow
-                    key={item.name + index}
+                    key={crypto.randomUUID()}
                     rowData={Object.values(item)}
                     rowType="stat"
+                  />
+                );
+              })
+            : archive.map((item) => {
+                return (
+                  <TableRow
+                    key={crypto.randomUUID()}
+                    rowData={Object.values(item)}
+                    rowType="note"
                   />
                 );
               })}
