@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Table from './components/table/Table';
-import Button from './components/ui/Button';
-import Modal from './components/ui/Modal';
+import Button from './components/ui/Button/Button';
+import Modal from './components/ui/Modal/Modal';
 import { useActions } from './hooks/useActions';
 import { useNotes } from './hooks/useNotes';
 import { useToggle } from './hooks/useToggle';
@@ -24,12 +24,12 @@ function App() {
   }, [notes, archive]);
 
   return (
-    <div className="flex flex-col gap-7 m-10">
+    <div className='flex flex-col gap-7 m-10'>
       <Table tableType={notesTableType} />
-      <div className="flex justify-end">
-        <Button buttonText="Create Note" />
+      <div className='flex justify-end'>
+        <Button buttonText='Create Note' />
       </div>
-      <Table tableType="stats" />
+      <Table tableType='stats' />
       {modalState && <Modal />}
     </div>
   );
