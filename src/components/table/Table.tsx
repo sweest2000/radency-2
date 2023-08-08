@@ -1,6 +1,6 @@
 import { useNotes } from '../../hooks/useNotes';
 import { useStats } from '../../hooks/useStats';
-import TableRow from './TableRow';
+import TableRow from './TableRow/TableRow';
 
 type TableProps = {
   tableType: string;
@@ -12,7 +12,7 @@ const Table = ({ tableType }: TableProps) => {
 
   return (
     <>
-      <table className="flex flex-col gap-3">
+      <table className='flex flex-col gap-3'>
         <thead>
           <TableRow
             rowData={
@@ -21,20 +21,18 @@ const Table = ({ tableType }: TableProps) => {
                 : Object.values(statsHeader[0])
             }
             rowType={
-              tableType === 'notes' || tableType === 'archive'
-                ? 'notesHeader'
-                : 'statsHeader'
+              tableType === 'notes' || tableType === 'archive' ? 'notesHeader' : 'statsHeader'
             }
           />
         </thead>
-        <tbody className="flex flex-col gap-3">
+        <tbody className='flex flex-col gap-3'>
           {tableType === 'notes'
             ? notes.map((item) => {
                 return (
                   <TableRow
                     key={crypto.randomUUID()}
                     rowData={Object.values(item)}
-                    rowType="note"
+                    rowType='note'
                   />
                 );
               })
@@ -44,7 +42,7 @@ const Table = ({ tableType }: TableProps) => {
                   <TableRow
                     key={crypto.randomUUID()}
                     rowData={Object.values(item)}
-                    rowType="stat"
+                    rowType='stat'
                   />
                 );
               })
@@ -53,7 +51,7 @@ const Table = ({ tableType }: TableProps) => {
                   <TableRow
                     key={crypto.randomUUID()}
                     rowData={Object.values(item)}
-                    rowType="note"
+                    rowType='note'
                   />
                 );
               })}
